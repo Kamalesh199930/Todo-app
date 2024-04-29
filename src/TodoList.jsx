@@ -1,136 +1,81 @@
 import React, { useState } from "react";
-import "bootstrap/dist/css/bootstrap.css";
-import Container from "react-bootstrap/Container";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
-import Button from "react-bootstrap/Button";
-import InputGroup from "react-bootstrap/InputGroup";
-import FormControl from "react-bootstrap/FormControl";
-import ListGroup from "react-bootstrap/ListGroup";
 
-function App() {
-    const [userInput, setUserInput] = useState("");
-    const [list, setList] = useState([]);
-
-    const updateInput = (value) => {
-        setUserInput(value);
-    };
+import "./TodoList.css";
+function TodoList() {
+    const [inputValue, setInputValue] = useState("");
+    const [items, setItems] = useState([]);
+    const [editItemId, setEditItemId] = useState(null);
 
     const addItem = () => {
-        if (userInput.trim() !== "") {
+        if (inputValue.trim() !== "") {
             const newItem = {
-                id: Math.random(),
-                value: userInput,
+                id: Date.now(),
+                text: inputValue,
             };
-            setList([...list, newItem]);
-            setUserInput("");
+
+            if (editItemId !== null) {
+                setItems(
+                    items.map((item) =>
+                        item.id === editItemId ? newItem : item
+                    )
+                );
+                setEditItemId(null);
+            } else {
+                setItems([...items, newItem]);
+            }
+            setInputValue("");
+        }
+    };
+
+    const editItem = (id) => {
+        const itemToEdit = items.find((item) => item.id === id);
+        if (itemToEdit) {
+            setInputValue(itemToEdit.text);
+            setEditItemId(id);
         }
     };
 
     const deleteItem = (id) => {
-        const updatedList = list.filter((item) => item.id !== id);
-        setList(updatedList);
+        setItems(items.filter((item) => item.id !== id));
     };
-
-    const editItem = (id, newValue) => {
-        const updatedList = list.map((item) =>
-            item.id === id ? { ...item, value: newValue } : item
-        );
-        setList(updatedList);
-    };
-
     return (
-        <Container>
-            <Row
-                style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    fontSize: "3rem",
-                    fontWeight: "bolder",
-                    color: "antiquewhite",
-                    backgroundColor: "black",
-                }}
-            >
-                TODO LIST
-            </Row>
-
-            <hr />
-            <Row>
-                <Col md={{ span: 5, offset: 4 }}>
-                    <InputGroup className="mb-3">
-                        <FormControl
-                            placeholder="add item . . . "
-                            size="lg"
-                            value={userInput}
-                            onChange={(e) => updateInput(e.target.value)}
-                            aria-label="add something"
-                            aria-describedby="basic-addon2"
-                            background-color="cadetblue"
-                        />
-                        <InputGroup>
-                            <Button
-                                variant="dark"
-                                className="mt-2"
-                                onClick={addItem}
+        <div className="todo-full">
+            <div className="todo-list">
+                <h1>CRUD EXAMPLE</h1>
+            </div>
+            <div className="todo-body">
+                <input
+                    type="text"
+                    value={inputValue}
+                    onChange={(e) => setInputValue(e.target.value)}
+                    placeholder="Enter item text"
+                    lass="form-control-plaintext"
+                />
+                <button onClick={addItem} class="btn btn-success">
+                    {editItemId !== null ? "Update" : "Add"}
+                </button>
+                <ul>
+                    {items.map((item) => (
+                        <li key={item.id}>
+                            {item.text}
+                            <button
+                                onClick={() => editItem(item.id)}
+                                className="btn btn-danger"
                             >
-                                ADD
-                            </Button>
-                        </InputGroup>
-                    </InputGroup>
-                </Col>
-            </Row>
-            <Row>
-                <Col md={{ span: 5, offset: 4 }}>
-                    <ListGroup>
-                        {list.map((item) => (
-                            <div key={item.id}>
-                                <ListGroup.Item
-                                    variant="dark"
-                                    action
-                                    style={{
-                                        display: "flex",
-                                        justifyContent: "space-between",
-                                    }}
-                                >
-                                    {item.value}
-                                    <span>
-                                        <Button
-                                            style={{ marginRight: "10px" }}
-                                            variant="light"
-                                            onClick={() => deleteItem(item.id)}
-                                        >
-                                            Delete
-                                        </Button>
-                                        <Button
-                                            variant="light"
-                                            onClick={() => {
-                                                const editedItem = prompt(
-                                                    "Edit the todo:",
-                                                    item.value
-                                                );
-                                                if (
-                                                    editedItem !== null &&
-                                                    editedItem.trim() !== ""
-                                                ) {
-                                                    editItem(
-                                                        item.id,
-                                                        editedItem
-                                                    );
-                                                }
-                                            }}
-                                        >
-                                            Edit
-                                        </Button>
-                                    </span>
-                                </ListGroup.Item>
-                            </div>
-                        ))}
-                    </ListGroup>
-                </Col>
-            </Row>
-        </Container>
+                                Edit
+                            </button>
+                            &nbsp;
+                            <button
+                                onClick={() => deleteItem(item.id)}
+                                class="btn btn-danger"
+                            >
+                                Delete
+                            </button>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        </div>
     );
 }
-
-export default App;
+export default TodoList;

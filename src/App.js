@@ -1,5 +1,6 @@
 import "./App.css";
 import TodoList from "./TodoList";
+import "bootstrap/dist/css/bootstrap.css";
 
 function App() {
     return (

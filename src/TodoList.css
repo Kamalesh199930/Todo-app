@@ -1,0 +1,14 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    background-color: #f3e6f3;
+}
+
+.todo-list {
+    color: black;
+    font-size: larger;
+    font-style: normal;
+    font-weight: 200;
+    background-color: aliceblue;
+}
